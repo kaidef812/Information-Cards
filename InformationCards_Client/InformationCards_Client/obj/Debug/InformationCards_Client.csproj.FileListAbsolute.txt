@@ -1,0 +1,15 @@
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\bin\Debug\InformationCards_Client.exe.config
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\bin\Debug\InformationCards_Client.exe
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\bin\Debug\InformationCards_Client.pdb
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\InformationCards_Client.csproj.AssemblyReference.cache
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\View\MainWindow.g.cs
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\App.g.cs
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\InformationCards_Client_MarkupCompile.cache
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\InformationCards_Client_MarkupCompile.lref
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\View\MainWindow.baml
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\InformationCards_Client.g.resources
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\InformationCards_Client.Properties.Resources.resources
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\InformationCards_Client.csproj.GenerateResource.cache
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\InformationCards_Client.csproj.CoreCompileInputs.cache
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\InformationCards_Client.exe
+D:\Programming\C#\Information-Cards\InformationCards_Client\InformationCards_Client\obj\Debug\InformationCards_Client.pdb
