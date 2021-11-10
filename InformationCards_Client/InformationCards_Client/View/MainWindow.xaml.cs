@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using InformationCards_Client.ViewModel;
+using InformationCards_Client.Model;
 
 namespace InformationCards_Client.View
 {
@@ -23,6 +25,7 @@ namespace InformationCards_Client.View
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
         }
     }
 }
