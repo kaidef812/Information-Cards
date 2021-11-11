@@ -39,7 +39,7 @@ namespace InformationCards_Server.Models
             sw.Close();
         }
 
-        public async Task Remove(BookCard bookCard)
+        public async Task Remove(int id)
         {
             string filePath = Path.Combine(_path, "books.json");
             StreamReader sr = new StreamReader(filePath);
@@ -47,7 +47,7 @@ namespace InformationCards_Server.Models
             sr.Close();
 
             var list = JsonConvert.DeserializeObject<List<BookCard>>(jsonString);
-            var cardToDelete = list.Find(x => x.Id == bookCard.Id);
+            var cardToDelete = list.Find(x => x.Id == id);
             list.Remove(cardToDelete);
             var newJson = JsonConvert.SerializeObject(list);
 
@@ -65,7 +65,8 @@ namespace InformationCards_Server.Models
 
             var list = JsonConvert.DeserializeObject<List<BookCard>>(jsonString);
             var cardToEdit = list.Find(x => x.Id == bookCard.Id);
-            cardToEdit.Name = "changed";
+            var cardIndex = list.IndexOf(cardToEdit);
+            list[cardIndex] = cardToEdit;
             var newJson = JsonConvert.SerializeObject(list);
 
             StreamWriter sw = new StreamWriter(filePath);

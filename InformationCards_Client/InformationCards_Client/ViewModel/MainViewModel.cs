@@ -1,19 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using InformationCards_Client.Model;
+using InformationCards_Client.View;
 
 namespace InformationCards_Client.ViewModel
 {
-    class MainViewModel : INotifyPropertyChanged
+    class MainViewModel
     {
-        public MainViewModel()
+        public MainViewModel(MainWindow window, StackPanel stackPanel)
         {
             Cards = new List<BookCard>();
+            _mainWindow = window;
+            _cardsPanel = stackPanel;
+        }
+
+        private MainWindow _mainWindow;
+
+        private StackPanel _cardsPanel;
+
+        private BookCard _selectedCard;
+
+        private RelayCommand _selectCard;
+        public RelayCommand SelectCard => Select();
+        private RelayCommand Select()
+        {
+            return _selectCard ?? new RelayCommand(obj =>
+            {
+                SetSelectedCard(obj);
+            });
+        }
+
+        private void SetSelectedCard(object obj)
+        {
+            var selectedCard = obj as Grid;
+            int selectedNumber = _cardsPanel.Children.IndexOf(selectedCard);
+            _selectedCard = Cards[selectedNumber];
+            _mainWindow.ChangeBackground(selectedCard);
         }
 
         #region GET
@@ -25,22 +55,30 @@ namespace InformationCards_Client.ViewModel
         {
             return _getCards ?? new RelayCommand(obj =>
             {
-                GetCardsFromServer();
+                var list = GetCardsFromServer();
+                UpdateCardsList(list);
+                FillViewCards();
             });
         }
 
-        private void GetCardsFromServer()
+        private List<BookCard> GetCardsFromServer()
         {
             HttpRequests httpRequests = new HttpRequests();
             Task<List<BookCard>> cardsFromRequest = Task.Run(() => httpRequests.GetCards());
             cardsFromRequest.Wait();
 
-            FillViewCards(cardsFromRequest.Result);
+            return cardsFromRequest.Result;
         }
 
-        private void FillViewCards(IEnumerable<BookCard> cardsCollection)
+        private void UpdateCardsList(IEnumerable<BookCard> cardsCollection)
         {
-            NotifyPropertyChanged(nameof(Cards));
+            Cards.Clear();
+            Cards.AddRange(cardsCollection);
+        }
+
+        private void FillViewCards()
+        {
+            _mainWindow.AddCards(Cards);
         }
         #endregion
 
@@ -58,19 +96,47 @@ namespace InformationCards_Client.ViewModel
 
         private void PostNewCard()
         {
-            BookCard bookCard = new BookCard();
-            bookCard.Name = "Test";
-
-            HttpRequests httpRequests = new HttpRequests();
-            Task postCard = Task.Run(() => httpRequests.PostCard(bookCard));
-            postCard.Wait();
+            AddCardWindow addCardWindow = new AddCardWindow();
+            addCardWindow.ShowDialog();
         }
         #endregion
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string propertyName)
+        #region PUT
+        private RelayCommand _putCard;
+        public RelayCommand PutCard => TryPutCard();
+        private RelayCommand TryPutCard()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return _putCard ?? new RelayCommand(obj =>
+            {
+                EditCardWindow editCardWindow = new EditCardWindow(_selectedCard.Id);
+                editCardWindow.ShowDialog();
+                var newList = GetCardsFromServer();
+                UpdateCardsList(newList);
+                FillViewCards();
+            });
         }
+        #endregion
+
+        #region DELETE
+        private RelayCommand _deleteCard;
+        public RelayCommand DeleteCard => TryDeleteCard();
+        private RelayCommand TryDeleteCard()
+        {
+            return _deleteCard ?? new RelayCommand(obj =>
+            {
+                DeleteCardFromServer(_selectedCard);
+                var newCardList = GetCardsFromServer();
+                UpdateCardsList(newCardList);
+                FillViewCards();
+            });
+        }
+
+        private void DeleteCardFromServer(BookCard bookCard)
+        {
+            HttpRequests httpRequests = new HttpRequests();
+            Task postCard = Task.Run(() => httpRequests.DeleteCard(bookCard.Id));
+            postCard.Wait();
+        }
+        #endregion
     }
 }

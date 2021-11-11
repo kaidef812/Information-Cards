@@ -33,9 +33,9 @@ namespace InformationCards_Server.Controllers
         }
 
         [HttpDelete]
-        public async Task Delete(BookCard bookCard)
+        public async Task Delete(int id)
         {
-            await _cardsContext.Remove(bookCard);
+            await _cardsContext.Remove(id);
         }
 
         [HttpPut]
@@ -43,37 +43,5 @@ namespace InformationCards_Server.Controllers
         {
             await _cardsContext.Edit(bookCard);
         }
-
-        //// GET: api/<BookCardsController>
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET api/<BookCardsController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST api/<BookCardsController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT api/<BookCardsController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        //// DELETE api/<BookCardsController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
     }
 }

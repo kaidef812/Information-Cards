@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace InformationCards_Client.Model
 
                 return result;
             }
-            catch(HttpRequestException e)
+            catch (HttpRequestException e)
             {
                 throw e;
             }
@@ -40,7 +41,35 @@ namespace InformationCards_Client.Model
             {
                 string jsonNewCard = JsonConvert.SerializeObject(newCard);
                 HttpContent httpContent = new StringContent(jsonNewCard);
+                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 HttpResponseMessage response = await _client.PostAsync("https://localhost:44309/api/bookCards", httpContent);
+            }
+            catch (HttpRequestException e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task PutCard(BookCard cardToChange)
+        {
+            try
+            {
+                string jsonCardToChange = JsonConvert.SerializeObject(cardToChange);
+                HttpContent httpContent = new StringContent(jsonCardToChange);
+                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                HttpResponseMessage response = await _client.PutAsync("https://localhost:44309/api/bookCards", httpContent);
+            }
+            catch (HttpRequestException e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task DeleteCard(int id)
+        {
+            try
+            {
+                HttpResponseMessage response = await _client.DeleteAsync("https://localhost:44309/api/bookCards?id=" + id.ToString());
             }
             catch (HttpRequestException e)
             {

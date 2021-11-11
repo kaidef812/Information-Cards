@@ -1,0 +1,52 @@
+﻿<Window x:Class="InformationCards_Client.View.AddCardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InformationCards_Client.View"
+        mc:Ignorable="d"
+        Title="AddCardWindow" Height="250" Width="520"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Style="{StaticResource NameInputFieldStyle}"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Text="Card name: "/>
+
+        <TextBox Style="{StaticResource InputBoxStyle}"
+                 Grid.Row="0"
+                 Grid.Column="1"
+                 Text="{Binding InputName}"/>
+        
+        <Button Style="{StaticResource ButtonStyle}"
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Content="Upload image"
+                Command="{Binding UploadImage}"/>
+        <Button Style="{StaticResource ButtonStyle}"
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Content="Post"
+                Command="{Binding AddCard}"/>
+    </Grid>
+</Window>
