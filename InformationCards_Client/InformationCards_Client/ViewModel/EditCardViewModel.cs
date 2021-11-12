@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using InformationCards_Client.View;
+using Microsoft.Win32;
 
 namespace InformationCards_Client.ViewModel
 {
@@ -19,15 +20,15 @@ namespace InformationCards_Client.ViewModel
             _changingCard = GetSelectedCard(id);
             NameCard = _changingCard.Name;
             NotifyPropertyChanged(nameof(NameCard));
-            ImageCard = GetImage();
-            NotifyPropertyChanged(nameof(ImageCard));
+            ImageCardSource = CreateImage();
+            NotifyPropertyChanged(nameof(ImageCardSource));
             _editCardWindow = editCardWindow;
         }
 
         private EditCardWindow _editCardWindow;
 
         private BookCard _changingCard { get; set; }
-        public Image ImageCard { get; set; }
+        public BitmapFrame ImageCardSource { get; set; }
         public string NameCard { get; set; }
 
         private BookCard GetSelectedCard(int id)
@@ -38,14 +39,41 @@ namespace InformationCards_Client.ViewModel
             return cardsFromRequest.Result.Find(c => c.Id == id);
         }
 
-        private Image GetImage()
+        private BitmapFrame CreateImage()
         {
-            Image cardImage = new Image();
             using (MemoryStream stream = new MemoryStream(_changingCard.Image))
             {
-                cardImage.Source = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                var frame = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                return frame;
             }
-            return cardImage;
+        }
+
+        private byte[] _image;
+
+        private RelayCommand _uploadImage;
+        public RelayCommand UploadImage => TryUploadImage();
+        private RelayCommand TryUploadImage()
+        {
+            return _uploadImage ?? new RelayCommand(obj =>
+            {
+                _changingCard.Image = ReadImage();
+                ImageCardSource = CreateImage();
+                NotifyPropertyChanged(nameof(ImageCardSource));
+            });
+        }
+
+        private byte[] ReadImage()
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Image Files|*.jpg;*png";
+            dlg.ShowDialog();
+            dlg.Multiselect = false;
+            using (Stream stream = dlg.OpenFile())
+            {
+                BinaryReader binary = new BinaryReader(stream);
+                byte[] file = binary.ReadBytes((int)stream.Length);
+                return file;
+            }
         }
 
         private RelayCommand _saveEdit;

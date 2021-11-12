@@ -29,9 +29,14 @@ namespace InformationCards_Client.View
             DataContext = new MainViewModel(this, CardsPanel);
         }
 
-        public void ChangeBackground(Grid card)
+        public void SetSelectedColor(Grid card)
         {
             card.Background = new SolidColorBrush(Colors.LightGray);
+        }
+
+        public void SetUnselectedColor(Grid card)
+        {
+            card.Background = new SolidColorBrush(Colors.Transparent);
         }
 
         public void AddCards(IEnumerable<object> cards)
@@ -50,12 +55,12 @@ namespace InformationCards_Client.View
 
             cardGrid.Style = (Style)Resources["CardGrid"];
 
-            RowDefinition rowImage = new RowDefinition();
-            RowDefinition rowName = new RowDefinition();
-            rowName.Height = new GridLength(50, GridUnitType.Pixel);
+            ColumnDefinition columnImage = new ColumnDefinition();
+            ColumnDefinition columnName = new ColumnDefinition();
+            columnImage.Width = new GridLength(250, GridUnitType.Pixel);
 
-            cardGrid.RowDefinitions.Add(rowImage);
-            cardGrid.RowDefinitions.Add(rowName);
+            cardGrid.ColumnDefinitions.Add(columnImage);
+            cardGrid.ColumnDefinitions.Add(columnName);
 
             Image cardImage = new Image();
             cardImage.Style = (Style)Resources["CardImage"];
@@ -70,8 +75,8 @@ namespace InformationCards_Client.View
             cardName.Text = bookCard.Name;
             cardGrid.Children.Add(cardName);
 
-            Grid.SetRow(cardImage, 0);
-            Grid.SetRow(cardName, 1);
+            Grid.SetColumn(cardImage, 0);
+            Grid.SetColumn(cardName, 1);
 
             MouseBinding mouseBinding = new MouseBinding();
             MouseGesture leftClickGesture = new MouseGesture();

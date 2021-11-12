@@ -31,6 +31,10 @@ namespace InformationCards_Server.Models
             sr.Close();
 
             var list = JsonConvert.DeserializeObject<List<BookCard>>(jsonString);
+            if(list == null)
+            {
+                list = new List<BookCard>();
+            }
             list.Add(bookCard);
             var newJson = JsonConvert.SerializeObject(list);
 
@@ -66,7 +70,8 @@ namespace InformationCards_Server.Models
             var list = JsonConvert.DeserializeObject<List<BookCard>>(jsonString);
             var cardToEdit = list.Find(x => x.Id == bookCard.Id);
             var cardIndex = list.IndexOf(cardToEdit);
-            list[cardIndex] = cardToEdit;
+
+            list[cardIndex] = bookCard;
             var newJson = JsonConvert.SerializeObject(list);
 
             StreamWriter sw = new StreamWriter(filePath);

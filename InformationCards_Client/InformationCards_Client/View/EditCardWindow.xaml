@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InformationCards_Client.View"
         mc:Ignorable="d"
-        Title="EditCardWindow" Height="450" Width="800">
+        Title="EditCardWindow" Height="500" Width="800">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -26,10 +26,14 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <!--<Image Style="{StaticResource CardImage}" Source="{Binding ImageCard}"/>-->
+        <Image Style="{StaticResource CardImage}" 
+               Source="{Binding ImageCardSource}"/>
+        
         <Button Style="{StaticResource ButtonStyle}"
                 Grid.Column="0"
                 VerticalAlignment="Bottom"
+                Content="Upload new Image"
+                Command="{Binding UploadImage}"
                 Margin="0,0,0,20"/>
 
         <TextBox Style="{StaticResource InputBoxStyle}"
@@ -40,7 +44,7 @@
                  Margin="0"/>
 
         <Button Style="{StaticResource ButtonStyle}"
-                Content="Сохранить"
+                Content="Save"
                 Grid.Row="2"
                 Grid.ColumnSpan="2"
                 Command="{Binding SaveEdit}"/>

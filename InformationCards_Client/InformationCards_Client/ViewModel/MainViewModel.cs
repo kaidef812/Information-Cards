@@ -18,15 +18,17 @@ namespace InformationCards_Client.ViewModel
         public MainViewModel(MainWindow window, StackPanel stackPanel)
         {
             Cards = new List<BookCard>();
+            _selectedCards = new List<BookCard>();
             _mainWindow = window;
             _cardsPanel = stackPanel;
         }
 
         private MainWindow _mainWindow;
 
+        #region SELECT CARD
         private StackPanel _cardsPanel;
 
-        private BookCard _selectedCard;
+        private List<BookCard> _selectedCards;
 
         private RelayCommand _selectCard;
         public RelayCommand SelectCard => Select();
@@ -34,17 +36,27 @@ namespace InformationCards_Client.ViewModel
         {
             return _selectCard ?? new RelayCommand(obj =>
             {
-                SetSelectedCard(obj);
+                UpdateSelectedCard(obj);
             });
         }
 
-        private void SetSelectedCard(object obj)
+        private void UpdateSelectedCard(object obj)
         {
             var selectedCard = obj as Grid;
             int selectedNumber = _cardsPanel.Children.IndexOf(selectedCard);
-            _selectedCard = Cards[selectedNumber];
-            _mainWindow.ChangeBackground(selectedCard);
+            var buffer = Cards[selectedNumber];
+            if (_selectedCards.Contains(buffer))
+            {
+                _selectedCards.Remove(buffer);
+                _mainWindow.SetUnselectedColor(selectedCard);
+            }
+            else
+            {
+                _selectedCards.Add(buffer);
+                _mainWindow.SetSelectedColor(selectedCard);
+            }
         }
+        #endregion
 
         #region GET
         public List<BookCard> Cards { get; set; }
@@ -56,8 +68,16 @@ namespace InformationCards_Client.ViewModel
             return _getCards ?? new RelayCommand(obj =>
             {
                 var list = GetCardsFromServer();
-                UpdateCardsList(list);
-                FillViewCards();
+                if (list != null)
+                {
+                    UpdateCardsList(list);
+                    FillViewCards();
+                    _selectedCards.Clear();
+                }
+                else
+                {
+                    MessageBox.Show("There is nothing to receive from the server.");
+                }
             });
         }
 
@@ -78,6 +98,7 @@ namespace InformationCards_Client.ViewModel
 
         private void FillViewCards()
         {
+            Cards = Cards.OrderBy(c => c.Name).ToList();
             _mainWindow.AddCards(Cards);
         }
         #endregion
@@ -91,6 +112,10 @@ namespace InformationCards_Client.ViewModel
             return _postCard ?? new RelayCommand(obj =>
             {
                 PostNewCard();
+                var newList = GetCardsFromServer();
+                UpdateCardsList(newList);
+                FillViewCards();
+                _selectedCards.Clear();
             });
         }
 
@@ -108,11 +133,19 @@ namespace InformationCards_Client.ViewModel
         {
             return _putCard ?? new RelayCommand(obj =>
             {
-                EditCardWindow editCardWindow = new EditCardWindow(_selectedCard.Id);
-                editCardWindow.ShowDialog();
-                var newList = GetCardsFromServer();
-                UpdateCardsList(newList);
-                FillViewCards();
+                if (_selectedCards.Count == 1)
+                {
+                    EditCardWindow editCardWindow = new EditCardWindow(_selectedCards.First().Id);
+                    editCardWindow.ShowDialog();
+                    var newList = GetCardsFromServer();
+                    UpdateCardsList(newList);
+                    FillViewCards();
+                    _selectedCards.Clear();
+                }
+                else
+                {
+                    MessageBox.Show($"Selected cards: {_selectedCards.Count}; Select 1 card!");
+                }
             });
         }
         #endregion
@@ -124,10 +157,14 @@ namespace InformationCards_Client.ViewModel
         {
             return _deleteCard ?? new RelayCommand(obj =>
             {
-                DeleteCardFromServer(_selectedCard);
+                foreach (var card in _selectedCards)
+                {
+                    DeleteCardFromServer(card);
+                }
                 var newCardList = GetCardsFromServer();
                 UpdateCardsList(newCardList);
                 FillViewCards();
+                _selectedCards.Clear();
             });
         }
 

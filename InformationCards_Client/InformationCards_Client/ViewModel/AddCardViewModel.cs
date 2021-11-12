@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media.Imaging;
 using InformationCards_Client.Model;
 using InformationCards_Client.View;
 using Microsoft.Win32;
 
 namespace InformationCards_Client.ViewModel
 {
-    class AddCardViewModel
+    class AddCardViewModel : INotifyPropertyChanged
     {
         public AddCardViewModel(AddCardWindow window)
         {
@@ -29,6 +32,11 @@ namespace InformationCards_Client.ViewModel
             return _uploadImage ?? new RelayCommand(obj =>
             {
                 _image = ReadImage();
+                if (_image != null)
+                {
+                    ImageCardSource = CreateImage();
+                    NotifyPropertyChanged(nameof(ImageCardSource));
+                }
             });
         }
 
@@ -36,13 +44,30 @@ namespace InformationCards_Client.ViewModel
         {
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.Filter = "Image Files|*.jpg;*png";
-            dlg.ShowDialog();
             dlg.Multiselect = false;
-            using (Stream stream = dlg.OpenFile())
+            if (dlg.ShowDialog() ?? false)
             {
-                BinaryReader binary = new BinaryReader(stream);
-                byte[] file = binary.ReadBytes((int)stream.Length);
-                return file;
+                using (Stream stream = dlg.OpenFile())
+                {
+                    BinaryReader binary = new BinaryReader(stream);
+                    byte[] file = binary.ReadBytes((int)stream.Length);
+                    return file;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public BitmapFrame ImageCardSource { get; set; }
+
+        private BitmapFrame CreateImage()
+        {
+            using (MemoryStream stream = new MemoryStream(_image))
+            {
+                var frame = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                return frame;
             }
         }
 
@@ -52,12 +77,18 @@ namespace InformationCards_Client.ViewModel
         {
             return _addCard ?? new RelayCommand(obj =>
             {
-                BookCard newCard = CreateNewCard();
-
-                HttpRequests httpRequests = new HttpRequests();
-                Task postCard = Task.Run(() => httpRequests.PostCard(newCard));
-                postCard.Wait();
-                _currentWindow.DialogResult = true;
+                if (_image == null || string.IsNullOrEmpty(InputName))
+                {
+                    MessageBox.Show("Fill all requirment data!");
+                }
+                else
+                {
+                    BookCard newCard = CreateNewCard();
+                    HttpRequests httpRequests = new HttpRequests();
+                    Task postCard = Task.Run(() => httpRequests.PostCard(newCard));
+                    postCard.Wait();
+                    _currentWindow.DialogResult = true;
+                }
             });
         }
 
@@ -73,11 +104,20 @@ namespace InformationCards_Client.ViewModel
             cardsFromRequest.Wait();
             int newId = 0;
             var list = cardsFromRequest.Result;
-            while(list.Find(c => c.Id == newId) != null)
+            if (list != null)
             {
-                newId++;
+                while (list.Find(c => c.Id == newId) != null)
+                {
+                    newId++;
+                }
             }
             return newId;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

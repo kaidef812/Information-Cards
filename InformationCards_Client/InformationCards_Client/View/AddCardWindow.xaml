@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InformationCards_Client.View"
         mc:Ignorable="d"
-        Title="AddCardWindow" Height="250" Width="520"
+        Title="AddCardWindow" Height="450" Width="520"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -19,8 +19,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="80"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -28,15 +28,16 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Style="{StaticResource NameInputFieldStyle}"
-                   Grid.Row="0"
-                   Grid.Column="0"
-                   Text="Card name: "/>
+        <Image Style="{StaticResource CardImage}"
+               Grid.Row="0"
+               Grid.Column="0"
+               Source="{Binding ImageCardSource}"/>
 
         <TextBox Style="{StaticResource InputBoxStyle}"
                  Grid.Row="0"
                  Grid.Column="1"
-                 Text="{Binding InputName}"/>
+                 Text="{Binding InputName}"
+                 HorizontalAlignment="Center"/>
         
         <Button Style="{StaticResource ButtonStyle}"
                 Grid.Row="1"
